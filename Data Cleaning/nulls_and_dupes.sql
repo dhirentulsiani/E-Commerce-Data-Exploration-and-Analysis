@@ -31,34 +31,6 @@ FROM olist_orders_dataset;
 
 
 /*
-TO DO
-
-reviews_dataset: BIG ISSUE: review_id repeated, and order_id is different in each instance (should not happen), the rest of the columns seems the same.
-products_dataset: product_id
-seller_dataset: seller_id
-*/
-
-
-/*
-In the 'olist_order_items_dataset' table, duplicate values are allowed in the 'order_id' column. This is because an order may include multiple items.
-In the first instance of a specific order_id, 'order_item_id' will equal 1, in the second 'order_item_id' will equal 2, and so on.
-SQL
-*/
-
---This query does not account for if item_id = 2 is duplicate (and 3,4,5....)
-SELECT
-	COUNT(order_id)
-	- COUNT(DISTINCT order_id) 
-	- (SELECT
-		COUNT(order_id)
-	   FROM olist_order_items_dataset
-	   WHERE order_item_id <> 1) AS zero_if_no_dupes
-FROM olist_order_items_dataset
-
-
-
-
-/*
 Finding review_id duplcates
 */
 
@@ -76,8 +48,6 @@ remains the same. This means that creator of the dataset made a mistake inputtin
 It is impossible or difficult to find which order_id the review actually corresponds too 
 
 I am not deleting duplicate instances yet as they may still come in handy.
-
-
 */
 
 /*
