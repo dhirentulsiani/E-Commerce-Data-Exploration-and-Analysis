@@ -22,7 +22,7 @@ GROUP BY customer_state
 ORDER BY 3 DESC;
 
 /*
-Calculating number of orders and customers by state
+Calculating number of orders and customers by city
 */
 SELECT
 	customer_city AS "City",
@@ -41,6 +41,8 @@ Incomplete
 
 /*
 Total Sales
+
+******BIG ISSUE. amount paid does not always match with price+delivery!!!
 */
 
 WITH total_price AS (
@@ -62,6 +64,7 @@ CROSS JOIN total_payments;
 
 /*
 Total Sales by State.
+******BIG ISSUE. amount paid does not always match with price+delivery!!!
 */
 
 WITH total_price AS (
@@ -97,6 +100,7 @@ JOIN total_payments
 
 /*
 Total Sales by City
+******BIG ISSUE. amount paid does not always match with price+delivery!!!
 */
 WITH total_price AS (
 	SELECT
@@ -132,6 +136,7 @@ LIMIT 100;
 
 /*
 Total Sales By Zip with Geolocation
+******BIG ISSUE. amount paid does not always match with price+delivery!!!
 */
 
 WITH total_price AS (
@@ -170,6 +175,7 @@ JOIN olist_geolocation_dataset
 
 /*
 Average Order Value, Including Shipping
+******BIG ISSUE. amount paid does not always match with price+delivery!!!
 */
 
 SELECT AVG(payment_value) AS "Average Order Value"
@@ -204,24 +210,7 @@ FROM olist_geolocation_dataset
 GROUP BY geolocation_zip_code_prefix
 HAVING COUNT(*) > 1;
 
-# We find there ore no duplicate orders in orders dataset
 
-SELECT
-	order_id,
-	COUNT(*)
-FROM olist_orders_dataset
-GROUP BY order_id
-HAVING COUNT(*) > 1;
-
-# However olist_order_items_dataset will have duplicate order ids when multiple items in order, So to check duplicates we have to use code below. Note there are no duplicates
-
-SELECT
-	order_id,
-	order_item_id,
-	COUNT(*)
-FROM olist_order_items_dataset
-GROUP BY order_id, order_item_id
-HAVING COUNT(*) > 1;
 
 
 /*

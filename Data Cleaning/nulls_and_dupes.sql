@@ -17,18 +17,6 @@ olist_geolocation_dataset: Unable to set a primary key. Possibly because of deci
 
 
 
-/*
-Checks if there are any dupes in the order_id column. 
-
-Prequisite that there are no nulls in the column
-
-If there are no dupes, then the output should be 0. 
-*/
-
-SELECT 
-	 COUNT(order_id) - COUNT(DISTINCT order_id)
-FROM olist_orders_dataset;
-
 
 /*
 Finding review_id duplcates
@@ -43,8 +31,8 @@ HAVING instances > 1;
 
 
 /*
-After investigating through my database viewer, I found that when the review_id is repeated the order_id is always different, yet every other column (data about the actual review, i.e score, comments) 
-remains the same. This means that creator of the dataset made a mistake inputting these rows. 
+After investigating through my database viewer, I found that when the review_id is repeated the order_id is always different, yet every other 
+column (data about the actual review, i.e score, comments) remains the same. This means that creator of the dataset made a mistake inputting these rows. 
 It is impossible or difficult to find which order_id the review actually corresponds too 
 
 I am not deleting duplicate instances yet as they may still come in handy.
@@ -70,7 +58,10 @@ So do not use approved_at timestamp for measuring delivery time, use purchase ti
 
 
 Some orders were never delivered (to carrier or customer), but were approved and have a purchase timestamp, and an entry in order_payments.
-Some orders have been delivered to carrier but not to customer, it does not seem to be a matter of the dataset being gathered too early, though there may be fringe instances of this.
+Some orders have been delivered to carrier but not to customer, it does not seem to be a matter of the dataset being gathered too early, 
+though there may be fringe instances of this.
+
+8 entries where order_status is delivered, but no delivery timestamp. They do appear in order_items atleast sometimes.
 */
 
 
