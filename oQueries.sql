@@ -32,6 +32,10 @@ FROM olist_customers_dataset
 GROUP BY 1
 ORDER BY 3 DESC;
 
+SELECT
+	
+FROM olist_customers_dataset
+
 /*
 Counting the number of top 50 cities by total customers in each state
 
