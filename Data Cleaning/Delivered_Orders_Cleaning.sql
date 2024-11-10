@@ -7,7 +7,9 @@ Some orders have been delivered to carrier but not to customer, it does not seem
 
 8 entries where order_status is delivered, but no timestamp for delivery to the customer
 
-2965 orders have seem not to have been delivered to customer.
+2965 orders total seem not to have been delivered to customer. The lack of a delivery timestamp is not a result of 
+the dataset being collected before they had a chance to deliver the orders. Most of these orders were purchased and expected to be delivered long before the latest orders of the
+dataset
 
 All but 6 of the 2963 with orders_status != "delivered" genuinely have not been delivered to the customer. All 6 of these exceptions have the order_status: "cancelled"
 
