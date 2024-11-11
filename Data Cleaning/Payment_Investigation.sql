@@ -30,5 +30,10 @@ JOIN payment_table
 ORDER BY 4 DESC;
 
 /*
-As we can see, there are 18 orders with a significant difference (>= $1, note. Brazillian Real not USD). With the largest difference being $51.62 
+From the query above we find there are 18 orders with a significant difference (>= $1, note. Brazillian Real not USD). With the largest difference being $51.62.
+
+Normally discounts are accounted for in the 'olist_order_items_dataset' table. The amount in the price column (in said table) can be different for the same product, 
+and notably the prices often reduce on Black Friday.
+
+However the amount missing often matches percentages divisible by 10 or 5 on the item prices, so it is likely discounts that have not been accounted for properly.
 */
