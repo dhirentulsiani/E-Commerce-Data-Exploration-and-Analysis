@@ -130,7 +130,55 @@ CREATE TABLE Cities_and_Delivery AS
 	ORDER BY Temp_Order_pop_ratio.Population DESC;
 
 
+/*
+Cleaning:
+Delete Duplicate City columns
+Rename columns
+Added states
 
+*/
+
+
+/*
+New table including customer and seller locations with olist_order_items table.
+
+*/
+
+CREATE TABLE products_and_location AS
+SELECT 
+	olist_order_items_dataset.order_id,
+	olist_orders_dataset.customer_id,
+	olist_order_items_dataset.product_id,
+	olist_order_items_dataset.seller_id,
+	olist_customers_dataset.customer_city,
+	olist_customers_dataset.customer_state,
+	olist_sellers_dataset.seller_city,
+	olist_sellers_dataset.seller_state,
+	olist_order_items_dataset.freight_value,
+	julianday(order_delivered_customer_date) - julianday(order_purchase_timestamp) AS delivery_length
+	
+FROM olist_order_items_dataset
+JOIN olist_orders_dataset
+	ON olist_order_items_dataset.order_id = olist_orders_dataset.order_id
+JOIN olist_customers_dataset
+	ON olist_orders_dataset.customer_id = olist_customers_dataset.customer_id
+JOIN olist_sellers_dataset
+	ON olist_order_items_dataset.seller_id = olist_sellers_dataset.seller_id
+
+
+
+/*
+Data related to where a city buys its products from.
+*/
+
+SELECT
+	customer_state,
+	seller_state,
+	COUNT(*),
+	AVG(freight_value),
+	AVG(delivery_length)
+FROM products_and_location
+GROUP BY customer_state, seller_state;
 
 /*
 IDK BELOW

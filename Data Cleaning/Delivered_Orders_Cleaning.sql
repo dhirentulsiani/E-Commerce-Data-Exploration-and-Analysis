@@ -30,6 +30,8 @@ Delete entries where order_status is delivered, but no timestamp for delivery to
 the dataset being collected before they had a chance to deliver the orders. As they were all purchased and expected to be delivered long before the latest orders of the
 dataset)
 
+In the Payment_Investigation file we delete some more entries from delivered_orders
+
 */
 
 CREATE TABLE delivered_orders AS 
