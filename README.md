@@ -6,6 +6,8 @@ The data includes information from a Random Sample of nearly 100 Thousand orders
 
 There are 9 tables containing information like: customer location, product descriptions, order data, etc.
 
+Another [dataset](https://sidra.ibge.gov.br/tabela/4714) used was for the population of cities in Brazil.
+
 ## About Olist:
 
 Olist connects thousands of smaller sellers/merchants/businesses to over 15 of Brazil's largest  e-marketplaces (Amazon, Americanas, etc.)
