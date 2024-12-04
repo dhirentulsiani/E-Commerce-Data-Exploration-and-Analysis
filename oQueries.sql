@@ -4,7 +4,7 @@ This means the same customer will get different ids in each order.
 */
 
 SELECT
-	COUNT(DISTINCT customer_id),
+	COUNT(DISTINCT customer_id) AS num_orders,
 	COUNT(DISTINCT customer_unique_id),
 	COUNT(DISTINCT customer_city),
 	COUNT(DISTINCT customer_state)
@@ -45,13 +45,11 @@ Incomplete
 
 /*
 Total Sales
-
-******BIG ISSUE. amount paid does not always match with price+delivery!!!
 */
 
-WITH total_price AS (
+WITH total_delivery AS (
 	SELECT
-		SUM(price) AS sum_price
+		SUM(freight_value) AS sum_delivery
 	FROM olist_order_items_dataset
 ),
 total_payments as (
@@ -60,15 +58,14 @@ total_payments as (
 	FROM olist_order_payments_dataset
 )
 SELECT 
-	sum_price AS "Total Revenue not including Delivery", 
+	sum_payments - sum_delivery AS "Total Revenue not including Delivery", 
 	sum_payments AS "Total Revenue including Delivery"
-FROM total_price
+FROM total_delivery
 CROSS JOIN total_payments;
 
 
 /*
 Total Sales by State.
-******BIG ISSUE. amount paid does not always match with price+delivery!!!
 */
 
 WITH total_price AS (
@@ -103,8 +100,9 @@ JOIN total_payments
 
 
 /*
-Total Sales by City
+Total Sales by City.
 ******BIG ISSUE. amount paid does not always match with price+delivery!!!
+(not yet updated query)
 */
 WITH total_price AS (
 	SELECT
@@ -202,6 +200,101 @@ JOIN product_category_name_translation
 GROUP BY 1
 ORDER BY 3 DESC;
 
+/*
+Revenue by Date
+*/
+
+WITH total_delivery AS (
+SELECT
+	DATE(olist_orders_dataset.order_purchase_timestamp) AS Day,
+	SUM(olist_order_items_dataset.freight_value) AS sum_delivery
+FROM olist_order_items_dataset
+JOIN olist_orders_dataset
+	ON olist_order_items_dataset.order_id = olist_orders_dataset.order_id
+GROUP BY 1
+),
+total_payments AS (
+SELECT
+	DATE(olist_orders_dataset.order_purchase_timestamp) AS Day,
+	SUM(payment_value) AS sum_payments
+FROM olist_order_payments_dataset
+JOIN olist_orders_dataset
+	ON 	olist_order_payments_dataset.order_id = olist_orders_dataset.order_id
+GROUP BY 1
+)
+SELECT
+	total_delivery.Day,
+	sum_payments - sum_delivery AS "Revenue Before Shipping",
+	sum_payments AS "Revenue After Shipping"
+FROM total_delivery
+JOIN total_payments
+	ON total_delivery.Day =  total_payments.Day;
+
+
+/*
+Items Sold and Number of Orders by Date
+*/
+
+SELECT
+	DATE(olist_orders_dataset.order_purchase_timestamp),
+	COUNT(*) AS "Items Purchased",
+	COUNT(DISTINCT olist_order_items_dataset.order_id) AS "Number of Orders"
+FROM olist_order_items_dataset
+JOIN olist_orders_dataset
+	ON olist_order_items_dataset.order_id = olist_orders_dataset.order_id
+GROUP BY 1;
+
+
+/*
+Revenue by Review Score
+Potentially wrong, have you considered duplicate order_ids?
+*/
+
+
+WITH revenue AS (
+SELECT
+	order_id,
+	SUM(payment_value) AS payments
+FROM olist_order_payments_dataset
+GROUP BY order_id
+)
+
+SELECT
+	review_score,
+	SUM(payments)
+FROM olist_order_reviews_dataset
+JOIN revenue
+	ON olist_order_reviews_dataset.order_id = revenue.order_id
+GROUP BY review_score;
+
+/*
+Avg sales growth per month, summing price instead of customer payments for consistency with PowerBi implementations.
+*/
+
+
+WITH Rev_2017 AS(
+SELECT
+	strftime("%m-%Y", purchase_date) AS month,
+	SUM(price) AS revenue
+FROM General_Table
+GROUP BY 1
+HAVING strftime("%Y", purchase_date) = "2017"
+ORDER BY 1
+),
+Change AS (
+SELECT
+	month,
+	revenue,
+	LAG(revenue, 1) OVER (ORDER BY month) AS change
+FROM Rev_2017
+)
+SELECT
+	AVG((revenue - change) / change)
+FROM Change
+
+
+
+---------------------------
 
 /*
 Checking Geolcation Data for duplicate zipcodes

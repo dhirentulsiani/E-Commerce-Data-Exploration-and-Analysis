@@ -10,7 +10,7 @@ SELECT
 	COUNT(*) AS num_customers
 FROM olist_customers_dataset
 GROUP BY customer_city
-ORDER BY 2 DESC
+ORDER BY 2 DESC;
 
 /*
 Our Goal is to find big cities with a relatively low number of orders.
@@ -55,6 +55,8 @@ Avg Freight/Delivery Costs by City
 We will need to use the olist_order_items table, which we found out has missing orders (data cleaning process).
 
 Luckily the missing orders are all undelivered orders, so every order we are considering is included in the table.
+
+Remark/Issue: This is average delivery cost per Order, in general delivery cost is charged per item.
 */
 
 WITH deliv_costs AS (
@@ -164,6 +166,69 @@ JOIN olist_customers_dataset
 	ON olist_orders_dataset.customer_id = olist_customers_dataset.customer_id
 JOIN olist_sellers_dataset
 	ON olist_order_items_dataset.seller_id = olist_sellers_dataset.seller_id
+
+
+
+/*
+Including Items bought by City and the ratio with population.
+For export into Power Bi
+*/
+
+WITH Items_Bought_by_City AS (
+SELECT
+	customer_city,
+	COUNT(*) AS num_items
+FROM General_Table
+GROUP BY customer_city
+)
+SELECT
+	Cities_and_Delivery.*,
+	num_items,
+	CAST(num_items AS REAL) * 10000 / Population AS item_pop_ratio
+FROM Items_Bought_by_City
+JOIN Cities_and_Delivery
+ON Items_Bought_by_City.customer_city = Cities_and_Delivery.City
+ORDER BY Cities_and_Delivery.Population DESC;
+
+/*
+items to pop ratio, avg delivery cost & length for all cities.
+
+Issue: It seems like there are 20 cities in oroginal dataset that are not in City_Populations. (total 4071 unique cities in orginal dataset)
+*/
+
+WITH Items_Bought_by_City AS (
+SELECT
+	customer_city,
+	COUNT(*) AS num_items
+FROM General_Table
+GROUP BY customer_city
+),
+Ratios AS (
+SELECT
+	customer_city,
+	num_items,
+	Population,
+	CAST(num_items AS REAL) * 10000 / Population AS item_pop_ratio
+FROM Items_Bought_by_City
+JOIN City_Populations
+ON Items_Bought_by_City.customer_city = City_Populations.Cities;
+),
+
+Orders AS (
+SELECT
+	order_id,
+	customer_city,
+	freight_value
+FROM General_Table
+GROUP BY 1
+),
+
+SELECT
+	customer_city,
+	AVG(freight_value)
+FROM Orders
+GROUP BY 1;
+	
 
 
 

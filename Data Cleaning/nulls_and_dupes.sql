@@ -31,6 +31,10 @@ HAVING instances > 1;
 
 
 /*
+TWO HUGE ISSUES WITH REVIEW TABLE!!!
+When an order has multiple items, the review table does not specify what item the review is for. Perhaps it is meant to be this way, but error or not, we
+have problems calculating review scores for each product
+
 After investigating through my database viewer, I found that when the review_id is repeated the order_id is always different, yet every other 
 column (data about the actual review, i.e score, comments) remains the same. This means that creator of the dataset made a mistake inputting these rows. 
 It is impossible or difficult to find which order_id the review actually corresponds too 
