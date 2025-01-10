@@ -2,7 +2,7 @@ import numpy
 import pandas as pd
 from sklearn import linear_model
 from scipy import stats
-#import statsmodels.api as sm
+import statsmodels.api as sm
 
 df = pd.read_csv("C:\SqliteDbs\olist\Outputs\Cities_And_Delivery_2.csv", sep = ',')
 #print(df)
@@ -15,17 +15,17 @@ df = pd.read_csv("C:\SqliteDbs\olist\Outputs\Cities_And_Delivery_2.csv", sep = '
 #display(df)
 
 
-X = df['item_pop_ratio'].to_numpy()
-y = df['avg_delivery_cost'].to_numpy()
+y = df['item_pop_ratio'].to_numpy()
+X = df['avg_delivery_cost'].to_numpy()
 
-'''
+
 model = sm.OLS(y, X)
 results = model.fit()
 print(results.summary())
-'''
+
 
 t = stats.linregress(y, X)
-print(t.rvalue, t.pvalue)
+print(t.rvalue, t.pvalue, t.slope)
 
 '''
 regr = linear_model.LinearRegression()

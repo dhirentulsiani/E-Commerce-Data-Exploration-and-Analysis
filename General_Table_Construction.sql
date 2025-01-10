@@ -58,3 +58,13 @@ JOIN olist_products_dataset
 	ON olist_order_items_dataset.product_id = olist_products_dataset.product_id
 JOIN olist_order_reviews_dataset
 	ON olist_order_items_dataset.order_id = olist_order_reviews_dataset.order_id
+
+/*
+There are 1739 rows less than the order_items table.
+
+This is mostly due to join from order_items to products_dataset tables. (108630 rows if you just join those 2, out of 110189 in order_items, 108450 in General Table currently)
+Yep, it looks like there are many product_ids in the order_items table that dont exist in the products_dataset table.
+
+IS this to account for orders deleted due to cleaning investigations, but i have code where i deleted those already
+
+*/
