@@ -1,0 +1,45 @@
+```{r}
+data = read.csv("C:/SqliteDbs/olist/Outputs/Cities_And_Delivery_2.csv")
+summary(data)
+```
+
+```{r}
+data$seller_pop_ratio = data$num_sellers * 10000 / data$Population
+```
+
+
+
+```{r}
+m1 = lm(item_pop_ratio ~ avg_delivery_cost, data = data)
+summary(m1)
+
+```
+
+```{r}
+res_m1 = residuals(m1);
+plot(data$avg_delivery_cost, res_m1);
+abline(h=0, col="red");
+
+y.hat = m1$fit;
+plot(y.hat, res_m1);
+abline(h=0, col="red")
+```
+
+
+```{r}
+m2 = lm(avg_delivery_length ~ seller_pop_ratio, data = data)
+summary(m2)
+```
+
+```{r}
+m3 = lm(avg_delivery_cost ~ avg_delivery_length, data = data)
+summary(m3)
+```
+```{r}
+general_table = read.csv("C:/SqliteDbs/olist/Outputs/General_Table.csv")
+```
+
+```{r}
+dcost_and_review_mod = lm(review_score ~ freight_value,data = general_table)
+summary(dcost_and_review_mod)
+```

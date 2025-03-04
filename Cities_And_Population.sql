@@ -230,6 +230,40 @@ FROM Orders
 GROUP BY 1;
 	
 
+/*
+customer an seller coordinates for each order
+*/
+
+WITH CTE AS (
+SELECT
+	products_and_location.*
+FROM products_and_location
+GROUP BY order_id
+),
+
+uniq_zips AS (
+	SELECT
+		*
+	FROM olist_geolocation_dataset
+	GROUP BY geolocation_zip_code_prefix
+)
+
+SELECT
+	CTE.order_id,
+	customer_zip_code_prefix,
+	cLoc.geolocation_lat AS customer_lat,
+	cLoc.geolocation_lng AS customer_lng,
+	sLoc.geolocation_lat AS seller_lat,
+	sLoc.geolocation_lng AS seller_lng
+FROM CTE
+JOIN olist_customers_dataset
+	ON CTE.customer_id = olist_customers_dataset.customer_id
+JOIN uniq_zips cLoc
+	ON olist_customers_dataset.customer_zip_code_prefix = cLoc.geolocation_zip_code_prefix
+JOIN olist_sellers_dataset
+	ON cte.seller_id = olist_sellers_dataset.seller_id
+JOIN uniq_zips sLoc
+	ON olist_sellers_dataset.seller_zip_code_prefix = sLoc.geolocation_zip_code_prefix
 
 
 /*

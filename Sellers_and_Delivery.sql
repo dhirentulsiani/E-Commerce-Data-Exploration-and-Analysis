@@ -82,3 +82,9 @@ SELECT
 FROM temp_table
 GROUP BY seller_city
 ORDER BY 3 DESC;
+
+
+/*
+Getting 
+*/
+
